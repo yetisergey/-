@@ -7,3 +7,6 @@ c:\users\sergey\documents\visual studio 2015\Projects\Сапёр\Сапёр\obj\
 C:\Users\Sergey\Desktop\Сапёр\Сапёр\bin\Debug\Сапёр.exe.config
 C:\Users\Sergey\Desktop\Сапёр\Сапёр\obj\Debug\Сапёр.exe
 C:\Users\Sergey\Desktop\Сапёр\Сапёр\obj\Debug\Сапёр.pdb
+C:\Users\Sergey\Desktop\project\Saper\Сапёр\bin\Debug\Сапёр.exe.config
+C:\Users\Sergey\Desktop\project\Saper\Сапёр\obj\Debug\Сапёр.exe
+C:\Users\Sergey\Desktop\project\Saper\Сапёр\obj\Debug\Сапёр.pdb
