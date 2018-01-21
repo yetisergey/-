@@ -1,241 +1,144 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Сапёр
+﻿namespace Сапёр
 {
+    using System;
+    using System.Collections.Generic;
+
     class Program
     {
-        class koord
-        {
-            public int x;
-            public int y;
-        }
+        private const int size = 9;
+        private const int countMines = 6;
+        private static List<Сoordinates> mines = new List<Сoordinates>();
+        private static int[,] mainArray = new int[size, size];
+        private static string[,] gameArray = new string[size, size];
+
         static void Main(string[] args)
         {
-            int[,] otv = new int[9, 9];
-            Random x = new Random();
-            List<koord> r = new List<koord>();
-            int it = 0;
-            bool flag;
-            while (it < 9)
+            var rnd = new Random();
+            while (mines.Count < countMines)
             {
-                flag = false;
-                koord kor = new koord();
-                kor.x = x.Next(0, 9);
-                kor.y = x.Next(0, 9);
-                foreach (koord l in r)
+                var coordinates = new Сoordinates();
+                coordinates.x = rnd.Next(0, 9);
+                coordinates.y = rnd.Next(0, 9);
+                if (mines.Contains(coordinates) == false)
                 {
-                    if (l.x == kor.x && l.y == kor.y)
-                    {
-                        flag = true;
-                    }
-                }
-                if (flag == false)
-                {
-                    r.Add(kor);
-                    otv[kor.x, kor.y] = -1;
-                    it++;
+                    mines.Add(coordinates);
+                    mainArray[coordinates.x, coordinates.y] = -1;
                 };
             };
-            Console.WriteLine();
-            Console.WriteLine();
 
-            for (int i = 0; i < 9; i++)
-            {
-                for (int j = 0; j < 9; j++)
-                {
-                    int tempi = i;
-                    int tempj = j;
-                    if (tempi + 1 != 9 && tempj + 1 != 9 && otv[tempi + 1, tempj + 1] == -1)
-                    {
-                        if (otv[tempi, tempj] != -1)
-                            otv[tempi, tempj]++;
-                    }
-                    tempi = i;
-                    tempj = j;
-                    if (tempi + 1 != 9 && tempj - 1 != -1 && otv[tempi + 1, tempj - 1] == -1)
-                    {
-                        if (otv[tempi, tempj] != -1)
-                            otv[tempi, tempj]++;
-                    }
-                    tempi = i;
-                    tempj = j;
-                    if (tempi - 1 != -1 && tempj + 1 != 9 && otv[tempi - 1, tempj + 1] == -1)
-                    {
-                        if (otv[tempi, tempj] != -1)
-                            otv[tempi, tempj]++;
-                    }
-                    tempi = i;
-                    tempj = j;
-                    if (tempi - 1 != -1 && tempj - 1 != -1 && otv[tempi - 1, tempj - 1] == -1)
-                    {
-                        if (otv[tempi, tempj] != -1)
-                            otv[tempi, tempj]++;
-                    }
-                    tempi = i;
-                    tempj = j;
-                    if (tempi + 1 != 9 && otv[tempi + 1, tempj] == -1)
-                    {
-                        if (otv[tempi, tempj] != -1)
-                            otv[tempi, tempj]++;
-                    }
-                    tempi = i;
-                    tempj = j;
-                    if (tempi - 1 != -1 && otv[tempi - 1, tempj] == -1)
-                    {
-                        if (otv[tempi, tempj] != -1)
-                            otv[tempi, tempj]++;
-                    }
-                    tempi = i;
-                    tempj = j;
-                    if (tempj + 1 != 9 && otv[tempi, tempj + 1] == -1)
-                    {
-                        if (otv[tempi, tempj] != -1)
-                            otv[tempi, tempj]++;
-                    }
-                    tempi = i;
-                    tempj = j;
-                    if (tempj - 1 != -1 && otv[tempi, tempj - 1] == -1)
-                    {
-                        if (otv[tempi, tempj] != -1)
-                            otv[tempi, tempj]++;
-                    }
-                }
-            }
+            CreateGame();
 
-            string[,] interf = new string[9, 9];
-            for (int i = 0; i < 9; i++)
+            bool win = false;
+            while (win == false)
             {
-                for (int j = 0; j < 9; j++)
-                {
-                    interf[i, j] = "*";
-                }
-            }
 
-            bool win = true;
-            while (win == true)
-            {
                 Console.Clear();
-                Console.WriteLine();
-                printmatrchar(interf);
+                PrintMatrix(gameArray);
                 Console.WriteLine("Ваш ход - ");
                 try
                 {
-                    int x_p = Int32.Parse(Console.ReadLine());
-                    int y_p = Int32.Parse(Console.ReadLine());
+                    int x_p = int.Parse(Console.ReadLine());
+                    int y_p = int.Parse(Console.ReadLine());
 
-                    if (otv[x_p, y_p] >= 0)
+                    if (mainArray[x_p, y_p] >= 0)
                     {
-                        interf[x_p, y_p] = "" + otv[x_p, y_p];
+                        gameArray[x_p, y_p] = "" + mainArray[x_p, y_p];
                     }
-                    else {
-                        win = false;
+                    else
+                    {
+                        win = true;
                         Console.WriteLine("Вы проиграли");
                     }
 
-                    if (otv[x_p, y_p] == 0)
+                    if (mainArray[x_p, y_p] == 0)
                     {
-                        bool flagnulls = true;
-                        while (flagnulls == true)
-                        {
-                            for (int i = 0; i < 9; i++)
-                            {
-                                for (int j = 0; j < 9; j++)
-                                {
-
-                                    if (i + 1 != 9 && j + 1 != 9 && interf[i + 1,j + 1] == "0")
-                                    {
-                                        interf[i , j] = "" + otv[i , j];
-                                        continue;
-                                        flagnulls = true;
-                                    }
-                                    else {
-                                        flagnulls = false;
-                                    }
-                                    if (i + 1 != 9 && j - 1 != -1 && interf[i + 1, j - 1] == "0")
-                                    {
-                                        interf[i, j] = "" + otv[i , j]; continue; flagnulls = true;
-                                    }
-                                    else {
-                                        flagnulls = false;
-                                    }
-                                    if (i - 1 != -1 && j + 1 != 9 && interf[i - 1, j + 1] == "0")
-                                    {
-                                        interf[i, j] = "" + otv[i, j]; continue; flagnulls = true;
-                                    }
-                                    else {
-                                        flagnulls = false;
-                                    }
-                                    if (i - 1 != -1 && j - 1 != -1 && interf[i - 1, j - 1] == "0")
-                                    {
-                                        interf[i , j] = "" + otv[i , j]; continue; flagnulls = true;
-                                    }
-                                    else {
-                                        flagnulls = false;
-                                    }
-
-                                    if (i + 1 != 9 && interf[i + 1, j] == "0")
-                                    {
-                                        interf[i , j ] = "" + otv[i , j]; continue; flagnulls = true;
-                                    }
-                                    else {
-                                        flagnulls = false;
-                                    }
-
-                                    if (j + 1 != 9 && interf[i , j+ 1] == "0")
-                                    {
-                                        interf[i, j] = "" + otv[i, j]; continue; flagnulls = true;
-                                    }
-                                    else {
-                                        flagnulls = false;
-                                    }
-
-                                    if (i - 1 != -1 && interf[i - 1, j] == "0")
-                                    {
-                                        interf[i, j] = "" + otv[i , j]; continue; flagnulls = true;
-                                    }
-                                    else {
-                                        flagnulls = false;
-                                    }
-
-                                    if (j - 1 != -1 && interf[i , j- 1] == "0")
-                                    {
-                                        interf[i, j] = "" + otv[i, j ]; continue; flagnulls = true;
-                                    }
-                                    else {
-                                        flagnulls = false;
-                                    }
-                                }
-                            }
-                        }
-
+                        OpenCell(x_p, y_p);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(e.Message);
                 }
 
-                if (checkwin(interf) == 10)
+                if (CheckWin(gameArray) == countMines)
                 {
-                    win = false;
+                    win = true;
                     Console.Beep();
+                    Console.Clear();
+                    PrintMatrix(gameArray);
                     Console.WriteLine("Вы выиграли!");
                 };
             }
         }
 
-        private static int checkwin(string[,] a)
+        /// <summary>
+        /// Создание интерфейса и массива ответов
+        /// </summary>
+        private static void CreateGame()
+        {
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (i + 1 != size && j + 1 != size && mainArray[i + 1, j + 1] == -1)
+                    {
+                        if (mainArray[i, j] != -1)
+                            mainArray[i, j]++;
+                    }
+                    if (i + 1 != size && j - 1 != -1 && mainArray[i + 1, j - 1] == -1)
+                    {
+                        if (mainArray[i, j] != -1)
+                            mainArray[i, j]++;
+                    }
+                    if (i - 1 != -1 && j + 1 != size && mainArray[i - 1, j + 1] == -1)
+                    {
+                        if (mainArray[i, j] != -1)
+                            mainArray[i, j]++;
+                    }
+                    if (i - 1 != -1 && j - 1 != -1 && mainArray[i - 1, j - 1] == -1)
+                    {
+                        if (mainArray[i, j] != -1)
+                            mainArray[i, j]++;
+                    }
+                    if (i + 1 != size && mainArray[i + 1, j] == -1)
+                    {
+                        if (mainArray[i, j] != -1)
+                            mainArray[i, j]++;
+                    }
+                    if (i - 1 != -1 && mainArray[i - 1, j] == -1)
+                    {
+                        if (mainArray[i, j] != -1)
+                            mainArray[i, j]++;
+                    }
+                    if (j + 1 != size && mainArray[i, j + 1] == -1)
+                    {
+                        if (mainArray[i, j] != -1)
+                            mainArray[i, j]++;
+                    }
+                    if (j - 1 != -1 && mainArray[i, j - 1] == -1)
+                    {
+                        if (mainArray[i, j] != -1)
+                            mainArray[i, j]++;
+                    }
+
+                    gameArray[i, j] = "*";
+                }
+            }
+        }
+
+        /// <summary>
+        /// Определить Победу
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        private static int CheckWin(string[,] array)
         {
             int count = 0;
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    if (a[i, j] == "*")
+                    if (array[i, j] == "*")
                     {
                         count++;
                     }
@@ -243,39 +146,125 @@ namespace Сапёр
             }
             return count;
         }
-        private static void printmatrint(int[,] a)
+
+        /// <summary>
+        /// Рекурсивное открытие ячеек
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        private static void OpenCell(int x, int y)
         {
-            for (int i = 0; i < 9; i++)
+            gameArray[x, y] = mainArray[x, y].ToString();
+            if (x - 1 >= 0 && y - 1 >= 0)
             {
-                for (int j = 0; j < 9; j++)
+                if (mainArray[x - 1, y - 1] == 0 && gameArray[x - 1, y - 1] == "*")
                 {
-                    Console.Write("|_{0,2}_", a[i, j]);
-
+                    OpenCell(x - 1, y - 1);
                 }
-                Console.Write("|" + i);
-                Console.WriteLine();
+                else
+                {
+                    gameArray[x - 1, y - 1] = mainArray[x - 1, y - 1].ToString();
+                }
             }
-
-            for (int i = 0; i < 9; i++)
-                Console.Write("{0,5}", i);
-            Console.WriteLine();
+            if (x - 1 >= 0)
+            {
+                if (mainArray[x - 1, y] == 0 && gameArray[x - 1, y] == "*")
+                {
+                    OpenCell(x - 1, y);
+                }
+                else
+                {
+                    gameArray[x - 1, y] = mainArray[x - 1, y].ToString();
+                }
+            }
+            if (x - 1 >= 0 && y + 1 < size)
+            {
+                if (mainArray[x - 1, y + 1] == 0 && gameArray[x - 1, y + 1] == "*")
+                {
+                    OpenCell(x - 1, y + 1);
+                }
+                else
+                {
+                    gameArray[x - 1, y + 1] = mainArray[x - 1, y + 1].ToString();
+                }
+            }
+            if (x + 1 < size && y - 1 >= 0)
+            {
+                if (mainArray[x + 1, y - 1] == 0 && gameArray[x + 1, y - 1] == "*")
+                {
+                    OpenCell(x + 1, y - 1);
+                }
+                else
+                {
+                    gameArray[x + 1, y - 1] = mainArray[x + 1, y - 1].ToString();
+                }
+            }
+            if (x + 1 < size)
+            {
+                if (mainArray[x + 1, y] == 0 && gameArray[x + 1, y] == "*")
+                {
+                    OpenCell(x + 1, y);
+                }
+                else
+                {
+                    gameArray[x + 1, y] = mainArray[x + 1, y].ToString();
+                }
+            }
+            if (x + 1 < size && y + 1 < size)
+            {
+                if (mainArray[x + 1, y + 1] == 0 && gameArray[x + 1, y + 1] == "*")
+                {
+                    OpenCell(x + 1, y + 1);
+                }
+                else
+                {
+                    gameArray[x + 1, y + 1] = mainArray[x + 1, y + 1].ToString();
+                }
+            }
+            if (y - 1 >= 0)
+            {
+                if (mainArray[x, y - 1] == 0 && gameArray[x, y - 1] == "*")
+                {
+                    OpenCell(x, y - 1);
+                }
+                else
+                {
+                    gameArray[x, y - 1] = mainArray[x, y - 1].ToString();
+                }
+            }
+            if (y + 1 < size)
+            {
+                if (mainArray[x, y + 1] == 0 && gameArray[x, y + 1] == "*")
+                {
+                    OpenCell(x, y + 1);
+                }
+                else
+                {
+                    gameArray[x, y + 1] = mainArray[x, y + 1].ToString();
+                }
+            }
         }
-        private static void printmatrchar(string[,] a)
+
+        /// <summary>
+        /// Вывод на экран
+        /// </summary>
+        /// <param name="array"></param>
+        private static void PrintMatrix(string[,] array)
         {
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
                     Console.Write('|');
-                    Console.Write("_{0}_", a[i, j]);
+                    Console.Write("_{0}_", array[i, j]);
 
                 }
-                Console.Write("|" + i);
-                Console.WriteLine();
+                Console.WriteLine("|" + i);
             }
 
             for (int i = 0; i < 9; i++)
                 Console.Write("{0,4}", i);
+
             Console.WriteLine();
         }
     }
